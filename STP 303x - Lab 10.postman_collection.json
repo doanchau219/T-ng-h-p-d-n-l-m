@@ -1,0 +1,635 @@
+{
+  "info": {
+    "_postman_id": "3f0c5600-8b01-4d21-b147-cdc6ffce178d",
+    "name": "STP 303x - Lab 10",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "38345561"
+  },
+  "item": [
+    {
+      "name": "Danh sách các giống chó",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Fixed syntax error and added missing semicolons",
+              "console.log(\"http code\" + pm.response.code);",
+              "pm.test (\"TC1: Call API get thành công với 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "//extract dữ liệu từ response sau khi nhận 200 OK.",
+              "if (pm.response.code === 200) {",
+              "    //extract response ra JSON",
+              "    const resultJson = pm.response.json();",
+              "    ",
+              "    pm.test(\"TC2: Call API get thành công với status success\", function () {",
+              "        pm.expect(resultJson.status).to.eql(\"success\");",
+              "    });",
+              "    pm.test(\"TC3: Call API get thành công, tồn tại giống chó husky\", function () {",
+              "        pm.expect(resultJson.message.husky).to.not.null;",
+              "    });",
+              "}",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://dog.ceo/api/breeds/list/all",
+          "protocol": "https",
+          "host": [
+            "dog",
+            "ceo"
+          ],
+          "path": [
+            "api",
+            "breeds",
+            "list",
+            "all"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ngẫu nhiên một chú chó thuộc giống Breedname",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://dog.ceo/api/breed/:breedname/images/random",
+          "protocol": "https",
+          "host": [
+            "dog",
+            "ceo"
+          ],
+          "path": [
+            "api",
+            "breed",
+            ":breedname",
+            "images",
+            "random"
+          ],
+          "variable": [
+            {
+              "key": "breedname",
+              "value": "husky"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{base_url}}/breed/{{breedname}}/images/random",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "console.log(\"http code\" + pm.response.code);",
+              "pm.test (\"TC1: Call API get thành công với 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "//extract dữ liệu từ response sau khi nhận 200 OK.",
+              "if (pm.response.code === 200) {",
+              "    //extract response ra JSON",
+              "    const resultJson = pm.response.json();",
+              "    ",
+              "    pm.test(\"TC2: Call API get thành công với status success\", function () {",
+              "        pm.expect(resultJson.status).to.eql(\"success\");",
+              "    });",
+              "    console.log(\"link ảnh\" + resultJson.message);",
+              "    pm.environment.set(\"dogimange\", resultJson.message);",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/breed/{{breedname}}/images/random",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "breed",
+            "{{breedname}}",
+            "images",
+            "random"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{base_url}}/breed/{{fakebreed}}/images/random",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Fixed syntax error and added missing semicolons",
+              "console.log(\"http code\" + pm.response.code);",
+              "pm.test (\"TC1: Call API get thành công với 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"TC2: Call API thất bại do nhập vào breed name không tồn tại\", function (){",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "//extract dữ liệu từ response sau khi nhận 200 OK ",
+              "if (pm.response.code === 404) {",
+              "    //extract response ra JSON",
+              "    const resultJson = pm.response.json();",
+              "    const expectMsg = \"Breed not found (master breed does not exist)\";",
+              "    pm.test(\"TC3: Call API thất bại message phải là: \" + expectMsg, function () {",
+              "        pm.expect(resultJson.message).to.eql(expectMsg);",
+              "    });",
+              "    console.log(\"message\" + resultJson.message);",
+              "}",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/breed/{{fakebreed}}/images/random",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "breed",
+            "{{fakebreed}}",
+            "images",
+            "random"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Thông tin mèo",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.thecatapi.com/v1/breeds",
+          "protocol": "https",
+          "host": [
+            "api",
+            "thecatapi",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "breeds"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Lấy thông tin  breed_ids = abys",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.thecatapi.com/v1/images/search?breed_ids=abys",
+          "protocol": "https",
+          "host": [
+            "api",
+            "thecatapi",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "images",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "breed_ids",
+              "value": "abys"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Tạo một user vote",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "DEMO-API-KEY",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\"image_id\": \"bali\",\n\"value\": \"like\",\n\"sub_id\": \"Id của người vote, chúng ta sẽ tạo 1 id bất kì\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://api.thecatapi.com/v1/votes",
+          "protocol": "https",
+          "host": [
+            "api",
+            "thecatapi",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "votes"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "lấy danh sách vote theo users",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "DEMO-API-KEY",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://api.thecatapi.com/v1/votes?sub_id=Id của người vote, chúng ta sẽ tạo 1 id bất kì",
+          "protocol": "https",
+          "host": [
+            "api",
+            "thecatapi",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "votes"
+          ],
+          "query": [
+            {
+              "key": "sub_id",
+              "value": "Id của người vote, chúng ta sẽ tạo 1 id bất kì"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Tạo vote cho mỗi ảnh",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Kiểm tra nếu response trả về HTTP 200 OK",
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              " ",
+              "// Parse response JSON",
+              "const votes = pm.response.json();",
+              " ",
+              "// Kiểm tra nếu các vote có đủ thông tin về image_id và sub_id",
+              "pm.test(\"Each vote has image_id and sub_id\", function () {",
+              "    pm.expect(votes.image_id).to.exist;",
+              "    pm.expect(votes.sub_id).to.exist;",
+              "});",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "DEMO-API-KEY",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\"image_id\": \"bali\",\n\"value\": \"like\",\n\"sub_id\": \"Id của người vote, chúng ta sẽ tạo 1 id bất kì\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://api.thecatapi.com/v1/votes",
+          "protocol": "https",
+          "host": [
+            "api",
+            "thecatapi",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "votes"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Lấy ảnh mèo và giống tương tự ",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Body của request",
+              "const body = {",
+              "    \"image_id\": pm.environment.get(\"catImageId\"),",
+              "    \"value\": 1, // 1 là like, 0 là dislike",
+              "    \"sub_id\": \"user123\"",
+              "};",
+              " ",
+              "// Kiểm tra nếu response trả về HTTP 201 Created",
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              " ",
+              "// Parse response JSON",
+              "const voteResponse = pm.response.json();",
+              " ",
+              "// Kiểm tra nếu response trả về message là success",
+              "pm.test(\"Vote is successful\", function () {",
+              "    pm.expect(voteResponse.message).to.eql(\"success\");",
+              "});",
+              " ",
+              "// Lưu lại id của vote vào biến môi trường",
+              "pm.environment.set(\"voteId\", voteResponse.id);"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.thecatapi.com/v1/breeds",
+          "protocol": "https",
+          "host": [
+            "api",
+            "thecatapi",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "breeds"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "lấy về các giống mèo, lưu lại id ",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Kiểm tra nếu response trả về HTTP 200 OK",
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              " ",
+              "// Parse response JSON",
+              "const catImages = pm.response.json();",
+              " ",
+              "// Kiểm tra nếu mảng ảnh không rỗng",
+              "pm.test(\"Cat images array is not empty\", function () {",
+              "    pm.expect(catImages.length).to.be.above(0);",
+              "});",
+              " ",
+              "// Kiểm tra nếu ảnh có đủ các trường id và url",
+              "pm.test(\"Each image has id and url\", function () {",
+              "    catImages.forEach((image) => {",
+              "        pm.expect(image.id).to.exist;",
+              "        pm.expect(image.name).to.exist;",
+              "        pm.expect(image.temperament).to.exist;",
+              "        pm.expect(image.origin).to.exist;",
+              "        pm.expect(image.description).to.exist;",
+              "//      pm.expect(image.wikipedia_url).to.exist; lỗi",
+              "",
+              "    });",
+              "});",
+              " ",
+              "// Lưu lại id và url của ảnh đầu tiên vào biến môi trường",
+              "if (catImages.length > 0) {",
+              "    pm.environment.set(\"catImageId\", catImages[0].id);",
+              "    pm.environment.set(\"catImageUrl\", catImages[0].url);",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.thecatapi.com/v1/breeds",
+          "protocol": "https",
+          "host": [
+            "api",
+            "thecatapi",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "breeds"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Kiểm tra 2 giống mèo",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Kiểm tra xem response có mã HTTP 200 OK không",
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              " ",
+              "const breeds = pm.response.json();",
+              "pm.test(\"Breeds array is not empty\", function () {",
+              "    pm.expect(breeds.length).to.be.above(0);",
+              "});",
+              " ",
+              "// Kiểm tra nếu có giống \"American Bobtail\" và \"Arabian Mau\"",
+              "const americanBobtail = breeds.find(b => b.name === \"American Bobtail\");",
+              "const arabianMau = breeds.find(b => b.name === \"Arabian Mau\");",
+              " ",
+              "pm.test(\"American Bobtail breed is present\", function () {",
+              "    pm.expect(americanBobtail).to.exist;",
+              "});",
+              " ",
+              "pm.test(\"Arabian Mau breed is present\", function () {",
+              "    pm.expect(arabianMau).to.exist;",
+              "});",
+              " ",
+              "// Lưu id của hai giống vào biến môi trường",
+              "if (americanBobtail) {",
+              "    pm.environment.set(\"americanBobtailId\", americanBobtail.id);",
+              "}",
+              "if (arabianMau) {",
+              "    pm.environment.set(\"arabianMauId\", arabianMau.id);",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.thecatapi.com/v1/breeds",
+          "protocol": "https",
+          "host": [
+            "api",
+            "thecatapi",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "breeds"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "lấy list vote của user",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Kiểm tra nếu response trả về HTTP 200 OK",
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              " ",
+              "// Parse response JSON",
+              "const votes = pm.response.json();",
+              " ",
+              "// Kiểm tra nếu mảng votes không rỗng",
+              "pm.test(\"Votes array is not empty\", function () {",
+              "    pm.expect(votes.length).to.be.above(0);",
+              "});",
+              " ",
+              "// Kiểm tra nếu các vote có đủ thông tin về image_id và sub_id",
+              "pm.test(\"Each vote has image_id and sub_id\", function () {",
+              "    votes.forEach((vote) => {",
+              "        pm.expect(vote.image_id).to.exist;",
+              "        pm.expect(vote.sub_id).to.exist;",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "DEMO-API-KEY",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://api.thecatapi.com/v1/votes?sub_id=CHAU@",
+          "protocol": "https",
+          "host": [
+            "api",
+            "thecatapi",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "votes"
+          ],
+          "query": [
+            {
+              "key": "sub_id",
+              "value": "CHAU@"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
